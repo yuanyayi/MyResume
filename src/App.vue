@@ -21,6 +21,10 @@ export default {
   padding: 0;
 }
 
+html,body {
+  height: 100%;
+}
+
 ul,ol,dl {
   list-style: none;
 }
@@ -30,5 +34,7 @@ ul,ol,dl {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  min-height: 100%;
 }
+
 </style>

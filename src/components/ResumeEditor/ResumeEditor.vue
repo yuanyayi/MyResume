@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="resumeEditor">
     <header>
       <div class="wrap">
         <router-link to="/"><img alt="Vue logo" src="../../assets/logo/logo32.png"></router-link>
@@ -7,6 +7,7 @@
           <nav class="right">
             <el-button type="primary">保存</el-button>
             <el-button type="info">预览</el-button>
+            <el-button @click="savePDF" type="info">生成PDF</el-button>
           </nav>
       </div>
     </header>
@@ -27,13 +28,14 @@
             <el-input placeholder="期望从事的职业" clearable v-model="base.position">
             </el-input>
           </li>
-          <li v-show="currentTabIndex === 1"></li>
+          <li v-show="currentTabIndex === 1">
+          </li>
           <li v-show="currentTabIndex === 2"></li>
           <li v-show="currentTabIndex === 3"></li>
           <li v-show="currentTabIndex === 4"></li>
         </ul>
       </aside>
-      <div class="screen">
+      <div id="screen">
         姓名： {{base.name}}
         期望城市：{{base.city}}
         期望职位：{{base.position}}
@@ -42,6 +44,9 @@
   </div>
 </template>
 <script>
+import html2canvas from "html2canvas"
+import * as jsPDF from 'jspdf'
+
 export default {
   name: "resumeEditor",
   data() {
@@ -64,7 +69,7 @@ export default {
         icon: "phone"
       }],
       base: {
-        name: "",
+        name: "我",
         city: "北京",
         position: "前端开发岗"
       }
@@ -74,13 +79,32 @@ export default {
   methods: {
     gotoTab(i) {
       this.currentTabIndex = i
+    },
+    savePDF() {
+      const _this = this
+      html2canvas(document.getElementById("screen")).then(function(canvas) {
+          var imgData = canvas.toDataURL('image/jpeg');
+          var doc = new jsPDF("p", "mm", "a4");
+          doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+          doc.save(`${_this.base.name}的PDF简历.pdf`);
+      });
     }
+
   }
 }
 
 </script>
 <style lang="less" scoped>
+#resumeEditor {
+  height: 100vh;
+}
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9;
+  background-color: #fff;
   .wrap {
     height: 40px;
     line-height: 40px;
@@ -99,11 +123,13 @@ header {
   }
 }
 .right {
-  float: right
+  float: right;
 }
 main {
+  box-sizing: border-box;
+  height: 100vh;
   background-color: #f5f5f5;
-  padding: 20px;
+  padding: 63px 20px 20px;
   &>* {
     background-color: #fff;
   }
@@ -148,7 +174,7 @@ main {
       }
     }
   }
-  .screen {
+  #screen {
     margin-left: 15px;
     flex: 2;
     padding: 10px;

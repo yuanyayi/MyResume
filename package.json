@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "element-ui": "^2.4.5",
+    "html2canvas": "^1.0.0-alpha.12",
+    "jspdf": "^1.4.1",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
