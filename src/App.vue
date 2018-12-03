@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ResumeEditor from 'components/ResumeEditor/ResumeEditor'
+import ResumeEditor from 'sideProjects/ResumeEditor/ResumeEditor'
 
 export default {
   name: 'app',

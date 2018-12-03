@@ -14,10 +14,10 @@
     <main>
       <aside>
         <ul class="editList tabs">
-          <li v-for="(tab,i) in tabs" :key="i" :title="tab.title" :class="{'cur': currentTabIndex === i}" @click="gotoTab(i)"><i :class="['fa', 'fa-'+tab.icon]"></i></li>
+          <li v-for="tab in tabs" :key="tab.label" :title="tab.title" :class="{'cur': currentTab === tab.label}" @click="gotoTab(tab.label)"><i :class="['fa', 'fa-'+tab.icon]"></i></li>
         </ul>
         <ul class="editContent">
-          <li v-show="currentTabIndex === 0">
+          <li v-show="currentTab === 'BaseInfo'">
             <label for="username">姓名</label>
             <el-input placeholder="请输入姓名" clearable v-model="base.name">
             </el-input>
@@ -28,17 +28,24 @@
             <el-input placeholder="期望从事的职业" clearable v-model="base.position">
             </el-input>
           </li>
-          <li v-show="currentTabIndex === 1">
+          <li v-show="currentTab === 'Career'">
           </li>
-          <li v-show="currentTabIndex === 2"></li>
-          <li v-show="currentTabIndex === 3"></li>
-          <li v-show="currentTabIndex === 4"></li>
+          <li v-show="currentTab === 'Study'"></li>
+          <li v-show="currentTab === 'Projects'"></li>
+          <li v-show="currentTab === 'Contact'"></li>
         </ul>
       </aside>
       <div id="screen">
+        <h2>基本信息</h2>
         姓名： {{base.name}}
         期望城市：{{base.city}}
         期望职位：{{base.position}}
+        <h2>职业履历</h2>
+        <el-card shadow="hover" v-for="c in career">
+
+          {{c.employed[0]}} 至 {{c.employed[1]}} 任职于 {{c.company}}
+          {{c.content}}
+        </el-card>
       </div>
     </main>
   </div>
@@ -51,42 +58,52 @@ export default {
   name: "resumeEditor",
   data() {
     return {
-      currentTabIndex: 0,
+      currentTab: "BaseInfo",
       tabs: [{
-        label: "基本信息",
-        icon: "id-badge"
+        title: "基本信息",
+        icon: "id-badge",
+        label: "BaseInfo"
       }, {
-        label: "职业履历",
-        icon: "briefcase"
+        title: "职业履历",
+        icon: "briefcase",
+        label: "Career"
       }, {
-        label: "教育经历",
-        icon: "graduation-cap"
+        title: "教育经历",
+        icon: "graduation-cap",
+        label: "Study"
       }, {
-        label: "项目简介",
-        icon: "laptop"
+        title: "项目简介",
+        icon: "laptop",
+        label: "Projects"
       }, {
-        label: "联系方式",
-        icon: "phone"
+        title: "联系方式",
+        icon: "phone",
+        label: "Contact"
       }],
       base: {
         name: "我",
         city: "北京",
         position: "前端开发岗"
-      }
+      },
+      career: [{
+        company: "悦动美悦（北京）教育科技有限公司",
+        employed: ["2018-07", "至今"],
+        content: "前端开发"
+      }],
 
     }
   },
   methods: {
     gotoTab(i) {
-      this.currentTabIndex = i
+      this.currentTab = i
     },
     savePDF() {
       const _this = this
       html2canvas(document.getElementById("screen")).then(function(canvas) {
-          var imgData = canvas.toDataURL('image/jpeg');
-          var doc = new jsPDF("p", "mm", "a4");
-          doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
-          doc.save(`${_this.base.name}的PDF简历.pdf`);
+        var imgData = canvas.toDataURL('image/jpeg');
+        var doc = new jsPDF("p", "mm", "a4");
+        doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+        doc.save(`${_this.base.name}的PDF简历.pdf`);
       });
     }
 
@@ -132,6 +149,7 @@ main {
   padding: 63px 20px 20px;
   &>* {
     background-color: #fff;
+    box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.25);
   }
   display: flex;
   aside {
