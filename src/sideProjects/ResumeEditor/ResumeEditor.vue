@@ -149,7 +149,7 @@ export default {
       careerActiveName: 0
     }
   },
-  created(){
+  mounted(){
     this.career.sort((c1,c2)=>{
       return c1.employed[1]>c2.employed[1]
     })
