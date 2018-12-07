@@ -38,7 +38,7 @@
               <el-collapse-item v-for="(c,i) in career" :name="i" :title="c.post +' ['+ c.company+']'">
                 <label>日期</label>
                 <div class="date-picker-group">
-                  <el-date-picker v-model="c.employed" type="daterange" align="center" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy 年 MM 月" value-format="yyyy-MM-dd" :picker-options="pickerOptions">
+                  <el-date-picker v-model="c.duraction" type="daterange" align="center" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy 年 MM 月" value-format="yyyy-MM-dd" :picker-options="pickerOptions">
                   </el-date-picker>
                 </div>
                 <label>公司名称</label>
@@ -58,7 +58,30 @@
             <div class="addBtn" @click="addCareer"><i class="el-icon-plus"></i></div>
           </li>
           <!-- 教育经历 -->
-          <li v-show="currentTab === 'Study'"></li>
+          <li v-show="currentTab === 'Education'">
+            <el-collapse accordion v-model="eduActiveName">
+              <el-collapse-item v-for="(c,i) in education" :name="i" :title="c.post +' ['+ c.school+']'">
+                <label>日期</label>
+                <div class="date-picker-group">
+                  <el-date-picker v-model="c.duraction" type="daterange" align="center" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy 年 MM 月" value-format="yyyy-MM-dd" :picker-options="pickerOptions">
+                  </el-date-picker>
+                </div>
+                <label>公司名称</label>
+                <el-input placeholder="公司名称" clearable v-model="c.school">
+                </el-input>
+                <label>岗位</label>
+                <el-input placeholder="岗位" clearable v-model="c.post">
+                </el-input>
+                <label>职责描述</label>
+                <el-input type="textarea" :rows="6" resize="none" placeholder="职责描述" v-model="c.content">
+                </el-input>
+                <p class="tr" style="margin-top: 10px">
+                  <el-button @click="cofirmDeleteCareer(i)" type="danger" icon="el-icon-delete" circle></el-button>
+                </p>
+              </el-collapse-item>
+            </el-collapse>
+            <div class="addBtn" @click="addCareer"><i class="el-icon-plus"></i></div>
+          </li>
           <!-- 个人项目 -->
           <li v-show="currentTab === 'Projects'"></li>
           <!-- 联系方式 -->
@@ -77,8 +100,15 @@
         </dl>
         <h2>职业履历</h2>
         <el-card shadow="hover" v-for="c in career">
-          <b>{{c.employed[0]|formatDate}}</b> 至 <b>{{c.employed[1]|formatDate}}</b> <br />
+          <b>{{c.duraction[0]|formatDate}}</b> 至 <b>{{c.duraction[1]|formatDate}}</b> <br />
           于 <b>{{c.company}}</b> 任 <b>{{c.post}}</b> 岗<br />
+          <b>职责描述：</b>
+          <pre class="positionContent">{{c.content}}</pre>
+        </el-card>
+        <h2>教育经历</h2>
+        <el-card shadow="hover" v-for="c in education">
+          <b>{{c.duraction[0]|formatDate}}</b> 至 <b>{{c.duraction[1]|formatDate}}</b> <br />
+          在 <b>{{c.school}}({{c.type}})</b> 就读 <b>{{c.post}}</b> 专业<br />
           <b>职责描述：</b>
           <pre class="positionContent">{{c.content}}</pre>
         </el-card>
@@ -107,7 +137,7 @@ export default {
       }, {
         title: "教育经历",
         icon: "graduation-cap",
-        label: "Study"
+        label: "Education"
       }, {
         title: "项目简介",
         icon: "laptop",
@@ -125,13 +155,20 @@ export default {
       },
       career: [{
         company: "悦动美悦(北京)教育科技有限公司",
-        employed: ["2018-07-23", "2019-12-31"],
+        duraction: ["2018-07-23", "2019-12-31"],
         post: "前端开发",
         content: "  这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。"
       },{
         company: "必胜课教育科技有限公司",
-        employed: ["2016-10-17", "2018-02-10"],
+        duraction: ["2016-10-17", "2018-02-10"],
         post: "前端开发",
+        content: "  这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。"
+      }],
+      education: [{
+        type: '本科',
+        school: "首都师范大学",
+        duraction: ["2008-09-01", "2014-07-01"],
+        post: "计算机科学与技术",
         content: "  这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。这是一段乱七八糟的岗位描述。。。这是一段需要换行的工作描述。。。"
       }],
       // 日期选择设置项
@@ -146,12 +183,13 @@ export default {
             }
           }]
       },
-      careerActiveName: 0
+      careerActiveName: 0,
+      eduActiveName: 0
     }
   },
   mounted(){
     this.career.sort((c1,c2)=>{
-      return c1.employed[1]>c2.employed[1]
+      return c1.duraction[1]>c2.duraction[1]
     })
   },
   methods: {
@@ -191,7 +229,7 @@ export default {
       let today = new Date()
       this.career.unshift({
         company: "",
-        employed: ["", `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`],
+        duraction: ["", `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`],
         post: "前端开发",
         content: ""
       })
